@@ -35,7 +35,7 @@
                     <button type="submit" class="btn btn-primary">Rent</button>
                 </form>
             </div>
-            <a href="rent_return_media.html" class="btn btn-primary mt-3">Back</a>
+            <a href="rent.html" class="btn btn-primary mt-3">Back</a>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

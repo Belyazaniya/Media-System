@@ -23,7 +23,7 @@
                     <button type="submit" class="btn btn-primary">Search</button>
                 </form>
             </div>
-            <a href="search_edit_media.html" class="btn btn-primary mt-3">Back</a>
+            <a href="insert_edit_media.html" class="btn btn-primary mt-3">Back</a>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
