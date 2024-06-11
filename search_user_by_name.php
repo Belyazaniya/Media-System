@@ -1,3 +1,23 @@
+<?php
+include "connection.php";
+
+if (isset($_GET['userName'])) {
+    $name = $_GET['userName'];
+    
+    try {
+        $sql = "SELECT User.ID, User.Name, User_Details.EGN, User_Details.GSM, User_Details.Address, User_Details.Description 
+                FROM User 
+                JOIN User_Details ON User.ID = User_Details.UserID 
+                WHERE User.Name LIKE ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->execute(['%' . $name . '%']);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        echo "<center style='color:red;'>Error: " . $e->getMessage() . "</center>";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,16 +34,46 @@
                 <h2>Search User by Name</h2>
             </div>
             <div class="card-body">
-                <form id="searchUserByNameForm" method="get" action="search_user_by_name.php">
+                <!-- Search User by Name Form -->
+                <form method="GET" action="search_user_by_name.php">
                     <div class="form-group">
                         <label for="userName">User Name</label>
-                        <input type="text" class="form-control" id="userName" name="userName" required>
+                        <input name="userName" type="text" class="form-control" id="userName" placeholder="Enter user name" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Search</button>
                     <a href="insert_edit_user.html" class="btn btn-secondary">Back</a>
                 </form>
-                <div id="userList">
-                    <!-- Search results will be displayed here -->
+                <div id="userList" class="mt-3">
+                    <?php if (isset($results) && count($results) > 0): ?>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>EGN</th>
+                                    <th>GSM</th>
+                                    <th>Address</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($results as $row): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($row['ID']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['Name']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['EGN']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['GSM']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['Address']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['Description']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <?php else: ?>
+                        <?php if (isset($name)): ?>
+                            <p class="text-center">No users found with the name "<?php echo htmlspecialchars($name); ?>"</p>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

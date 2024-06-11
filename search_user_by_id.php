@@ -1,3 +1,23 @@
+<?php
+include "connection.php";
+
+if (isset($_GET['userID'])) {
+    $ID = $_GET['userID'];
+    
+    try {
+        $sql = "SELECT User.ID, User.Name, User_Details.EGN, User_Details.GSM, User_Details.Address, User_Details.Description 
+                FROM User 
+                JOIN User_Details ON User.ID = User_Details.UserID 
+                WHERE User.ID LIKE ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->execute(['%' . $ID . '%']);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        echo "<center style='color:red;'>Error: " . $e->getMessage() . "</center>";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,8 +42,37 @@
                     <button type="submit" class="btn btn-primary">Search</button>
                     <a href="insert_edit_user.html" class="btn btn-secondary">Back</a>
                 </form>
-                <div id="userDetails">
-                    <!-- Search results will be displayed here -->
+                <div id="userList" class="mt-3">
+                    <?php if (isset($results) && count($results) > 0): ?>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>EGN</th>
+                                    <th>GSM</th>
+                                    <th>Address</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($results as $row): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($row['ID']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['Name']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['EGN']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['GSM']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['Address']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['Description']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <?php else: ?>
+                        <?php if (isset($name)): ?>
+                            <p class="text-center">No users found with the ID "<?php echo htmlspecialchars($name); ?>"</p>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -31,5 +80,6 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 </body>
 </html>
